@@ -3,19 +3,24 @@ import "../css/app.css";
 import { Box, Button, Container, Stack, Typography } from "@mui/material";
 import { RippleBadge } from "./MaterialTheme/styled";
 import { Link, Route, Switch } from "react-router-dom";
-import { About } from "./screens/About";
-import { Users } from "./screens/Users";
+import { HomePage } from "./screens/homePage";
+import { ProductsPage } from "./screens/productsPage";
+import { OrdersPage } from "./screens/ordersPage";
+import { UserPage } from "./screens/userPage";
 
 function App() {
   return (  
   <div>
     <nav>
       <ul>
+      <li>
+           <Link to="/">HomePage</Link>
+         </li>
         <li>
-          <Link to="/">Home</Link>
+          <Link to="/products">ProductsPag</Link>
         </li>
         <li>
-          <Link to="/about">About</Link>
+          <Link to="/member-page">UserPage</Link>
         </li>
         <li>
           <Link to="/users">Users</Link>
@@ -24,22 +29,23 @@ function App() {
     </nav>
     
     <Switch>
-      <Route path="/about">
-        <About />
+    <Route path="/products">
+         <ProductsPage />
+       </Route>
+       <Route path="/order">
+         <OrdersPage />
       </Route>
-      <Route path="/users">
-        <Users />
+      <Route path="/member-page">
+      <UserPage />
       </Route>
       <Route path="/">
-        <Home />
+        <HomePage/>
       </Route>
     </Switch>
   </div>
   );
 }
-function Home() {
-  return <Container>Home</Container>;
-}
+
 
 export default App;
 
