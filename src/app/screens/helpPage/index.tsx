@@ -9,7 +9,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Button from "@mui/material/Button";
 import TabContext from "@mui/lab/TabContext";
 import TabPanel from "@mui/lab/TabPanel";
-import "../../../../css/help.css";
+import "./../../../css/help.css";
 import { faq } from "./../../../lib/data/faq";
 import { terms } from "./../../../lib/data/terms";
 
