@@ -8,6 +8,17 @@ import { CssVarsProvider } from "@mui/joy/styles";
 import CardOverflow from "@mui/joy/CardOverflow";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+
+import { useSelector } from "react-redux";
+import { createSelector } from "reselect";
+import { retrievePopularDishes} from "./selector";
+import { Product } from "./../../../lib/types/product";
+import { ProductCollection } from "./../../../lib/enums/product.enum";
+
+/** REDUX SLICE & SELECTOR **/
+const popularDishesRetriever = createSelector(retrievePopularDishes, (popularDishes) => ({popularDishes})
+);
+
  
 const list = [
    { productName: "Lavash", imagePath: "/img/lavash.webp" },
@@ -18,6 +29,10 @@ const list = [
  
  
 export default function PopularDishes() {
+  const {popularDishes} = useSelector(popularDishesRetriever);
+
+  console.log("popularDishes:", popularDishes);
+  
    return (
     <div className="popular-dishes-frame">
     <Container>
