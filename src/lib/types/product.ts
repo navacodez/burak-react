@@ -10,8 +10,8 @@ export interface Product {
   productSize: ProductSize;
   productVolume: number;
   productDesc?: string;
-  productImages?: string[];
-  productViews?: number; 
+  productImages: string[];
+  productViews: number; 
   createdAt: Date;
   updatedAt: Date;
 }
