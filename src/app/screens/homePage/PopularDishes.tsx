@@ -12,8 +12,8 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
 import { retrievePopularDishes } from "./selector";
-import { Product } from "./../../../lib/types/product";
-import { serverApi } from "./../../../lib/config";
+import { Product } from "../../../lib/types/product";
+import { serverApi } from "../../../lib/config";
 
 /** REDUX SLICE & SELECTOR **/
 const popularDishesRetriever = createSelector(
