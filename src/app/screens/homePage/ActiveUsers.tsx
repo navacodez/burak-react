@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Container, Stack } from "@mui/material";
-import Card from '@mui/joy/Card';
+import Card from "@mui/joy/Card";
 import { CssVarsProvider, Typography } from "@mui/joy/";
 import CardOverflow from "@mui/joy/CardOverflow";
 import AspectRatio from "@mui/joy/AspectRatio";
@@ -16,6 +16,14 @@ const topUsersRetriever = createSelector(
   retrieveTopUsers,
   (topUsers) => ({ topUsers })
 );
+
+const activeUsers = [
+  { memberNick: "Nava", memberImage: "/img/navruz.webp" },
+  { memberNick: "Nava", memberImage: "/img/navruz.webp" },
+  { memberNick: "Nava", memberImage: "/img/navruz.webp" },
+  { memberNick: "Nava", memberImage: "/img/navruz.webp" },
+];
+
  
 export default function ActiveUsers() {
     const {topUsers} = useSelector(topUsersRetriever);
@@ -46,7 +54,7 @@ export default function ActiveUsers() {
                   </Card>
                  );
              })
-    ) : (
+           ) : (
                 <Box className="no-data">No Active Users!</Box>
               )}
             </CssVarsProvider>

@@ -1,24 +1,29 @@
-import React from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import {
-   Box,
-   Button,
-   Pagination,
-   Stack,
-   Container,
-   Badge,
-   TextField,
+  Box,
+  Button,
+  Pagination,
+  Stack,
+  Container,
+  Badge,
+  TextField,
+  PaginationItem,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import MonetizationIcon from "@mui/icons-material/MonetizationOn";
 import { url } from "inspector";
 
-
 import { useDispatch, useSelector } from "react-redux";
 import { createSelector, Dispatch } from "@reduxjs/toolkit";
 import { setProducts } from "./slice";
-import { Product } from "../../../lib/types/product";
+import { Product, ProductInquiry } from "./../../../lib/types/product";
 import { retrieveProducts } from "./selector";
+import ProductService from "../../services/ProductService";
+import { ProductCollection } from "./../../../lib/enums/product.enum";
+import { serverApi } from "./../../../lib/config";
+import { ArrowBack, ArrowForward } from "@mui/icons-material";
+import { useHistory } from "react-router-dom";
 
 /** REDUX SLICE & SELECTOR **/
 const actionDispatch = (dispatch: Dispatch) => ({
@@ -29,59 +34,64 @@ const productsRetriever = createSelector(
   retrieveProducts,
   (products) => ({products,    
   }));
- 
-const products = [
-   {
-     name: "Cutlet",
-     price: 15,
-     img: "./img/kebab-fresh.webp",
-     large: true,
-   },
-   {
-     name: "Kebab",
-     price: 15,
-     img: "./img/kebab.webp",
-     large: true,
-   },
-   {
-     name: "Kebab",
-     price: 15,
-     img: "./img/lavash.webp",
-     large: true,
-   },
-   {
-     name: "Lavash",
-     price: 15,
-     img: "./img/kebab.webp",
-     large: true,
-   },
-   {
-     name: "Lavash",
-     price: 15,
-     img: "./img/lavash.webp",
-     large: false,
-   },
-   {
-     name: "Cutlet",
-     price: 15,
-     img: "./img/fresh.webp",
-     large: false,
-   },
-   {
-     name: "Kebab",
-     price: 15,
-     img: "./img/cutlet.webp",
-     large: true,
-   },
-   {
-     name: "Kebab",
-     price: 15,
-     img: "./img/food-city.webp",
-     large: true,
-   },
-];
+
+
 
 export default function Products() {
+
+  const {setProducts} = actionDispatch(useDispatch());
+  const {products} = useSelector(productsRetriever);
+  const [productSearch, setProductSearch] = useState<ProductInquiry>({
+    page: 1,
+    limit: 8,
+    order: "createdAt",
+    productCollection: ProductCollection.DISH,
+  search: "",
+  });
+  const [searchText, setSearchText] = useState<string>("");
+  const history = useHistory();
+
+  useEffect(() => {
+  const product = new ProductService();
+  product.getProducts(productSearch).then(data => setProducts(data))
+  .catch((err) => console.log(err));
+ }, [productSearch]);
+
+ useEffect(() => {
+  if(searchText === "") {
+    productSearch.search = "";
+    setProductSearch({ ...productSearch })
+  } 
+ }, [searchText]);
+
+ /** HANDLERS **/
+
+ const searchCollectionHandler = (collection: ProductCollection) => {
+ productSearch.page = 1;
+ productSearch.productCollection = collection;
+ setProductSearch({ ...productSearch });
+ };
+
+ const searchOrderHandler = (order: string) => {
+  productSearch.page = 1;
+ productSearch.order = order;
+ setProductSearch({ ...productSearch });
+ }
+
+ const searchProductHandler = () => {
+   productSearch.search = searchText;
+   setProductSearch({ ...productSearch });
+ }
+
+ const paginationHandler = (e: ChangeEvent<any>, value: number) => {
+  productSearch.page = value;
+  setProductSearch({...productSearch});
+ };
+
+const chooseDishHandler = (id: string) => {
+ history.push(`/products/${id}`);
+}
+
   return (
     <div className="products">
       <Container>
@@ -93,11 +103,21 @@ export default function Products() {
             <Box className="search">
               <TextField
                 className="input"
+                name={"singleResearch"}
                 size="small"
                 placeholder="Type here"
+                value={searchText}
+                onChange={(e) => 
+                  setSearchText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if(e.key === "Enter") searchProductHandler();
+                  }}
               />
-              <Button variant="contained" className="icons" color="primary">
-                Search <SearchIcon />
+              <Button variant="contained" className="icons" color="primary"
+                endIcon={<SearchIcon />}
+                onClick={searchProductHandler}
+                >
+                Search 
               </Button>
             </Box>
           </Stack>
@@ -117,8 +137,9 @@ export default function Products() {
               <Button
                 sx={{ marginRight: "18px" }}
                 variant="contained"
-                color="primary"
                 className="order"
+                color={productSearch.order === "createdAt" ?  "primary" : "secondary"}
+                onClick={() => searchOrderHandler("createdAt")}
               >
                 {" "}
                 New
@@ -126,13 +147,15 @@ export default function Products() {
               <Button
                 sx={{ marginRight: "18px" }}
                 variant="contained"
-                color="secondary"
                 className="order"
+                color={productSearch.order === "productPrice" ?  "primary" : "secondary"}
+                onClick={() => searchOrderHandler("productPrice")}
               >
                 {" "}
                 Price
               </Button>
-              <Button variant="contained" color="secondary" className="order">
+              <Button variant="contained"  color={productSearch.order === "productViews" ?  "primary" : "secondary"}
+                onClick={() => searchOrderHandler("productViews")}className="order">
                 {" "}
                 Views
               </Button>
@@ -147,35 +170,37 @@ export default function Products() {
             <Stack>
               <Button
                 variant="contained"
-                color="secondary"
+                color={productSearch.productCollection === ProductCollection.OTHER ?"primary" : "secondary"}
+                onClick={() => searchCollectionHandler(ProductCollection.OTHER)}
                 className="category-buttons"
               >
                 Other
               </Button>
               <Button
                 variant="contained"
-                color="secondary"
+                color={productSearch.productCollection === ProductCollection.DESSERT ?"primary" : "secondary"}  onClick={() => searchCollectionHandler(ProductCollection.DESSERT)}
                 className="category-buttons"
               >
                 Dessert
               </Button>
               <Button
                 variant="contained"
-                color="secondary"
+                color={productSearch.productCollection === ProductCollection.DRINK ?"primary" : "secondary"}
                 className="category-buttons"
+                onClick={() => searchCollectionHandler(ProductCollection.DRINK)}
               >
                 Drink
               </Button>
               <Button
                 variant="contained"
-                color="secondary"
+                color={productSearch.productCollection === ProductCollection.SALAD ?"primary" : "secondary"} onClick={() => searchCollectionHandler(ProductCollection.SALAD)}
                 className="category-buttons"
                 >
                 Salad
               </Button>
               <Button
                 variant="contained"
-                color="primary"
+                color={productSearch.productCollection === ProductCollection.DISH ?"primary" : "secondary"} onClick={() => searchCollectionHandler(ProductCollection.DISH)}
                 className="category-buttons"
               >
                 Dish
@@ -184,22 +209,20 @@ export default function Products() {
 
             <Stack className="product-wrapper">
               {products.length !== 0 ? (
-                products.map((product, index) => {
+                products.map((product: Product) => {
+                  const imagePath = `${serverApi}/${product.productImages[0]}`;
+                  const sizeVolume = product.productCollection === ProductCollection.DRINK ? product.productVolume + " litr" : product.productSize + " size";
                   return (
-                    <Stack key={index} className="product-card">
+                    <Stack key={product._id} className="product-card" onClick={() => chooseDishHandler(product._id)}>
                       <Stack
                         className="product-img"
                         sx={{
                           display: "block",
-                          background: `url(${product.img})`,
+                          background: `url(${imagePath})`,
                         }}
                       >
-                        {product.large ? (
-                          <div className="product-sale">Large-size</div>
-                        ) : (
-                          <div className="product-sale">Normal-Size</div>
-                        )}
-
+                        
+                          <div className="product-sale">{sizeVolume}</div>
                         <Button className="shop-btn">
                           <img
                             src={"icons/shopping-cart.svg"}
@@ -208,15 +231,15 @@ export default function Products() {
                           />
                         </Button>
                         <Button className="view-btn" sx={{ right: "36px" }}>
-                          <Badge badgeContent={20} color="secondary">
+                          <Badge badgeContent={product.productViews} color="secondary">
                             <RemoveRedEyeIcon
-                              sx={{ color: product.large ? "gray" : "white" }}
+                              sx={{ color: product.productViews === 0 ? "gray" : "white", }}
                             />
                           </Badge>
                         </Button>
                       </Stack>
                       <Box className="product-desc">
-                        <span className="product-title">{product.name}</span>
+                        <span className="product-title">{product.productName}</span>
                         <div className="product-price">
                           <MonetizationIcon
                             style={{
@@ -224,7 +247,7 @@ export default function Products() {
                               color: "white",
                             }}
                           />
-                          <div className="price-tag">{12}</div>
+                          <div className="price-tag">{product.productPrice}</div>
                         </div>
                       </Box>
                     </Stack>
@@ -236,7 +259,16 @@ export default function Products() {
             </Stack>
           </Box>
           <Stack spacing={2} mt={4} alignItems="center">
-            <Pagination count={3} color="secondary" />
+            <Pagination 
+            count={products.length !== 0 ? productSearch.page + 1 
+              : productSearch.page}
+            page={productSearch.page}
+            
+              
+           color={"secondary" }
+           
+          onChange={paginationHandler}
+        />
           </Stack>
         </Stack>
       </Container>
@@ -276,5 +308,5 @@ export default function Products() {
         </Container>
       </div>
     </div>
-  );
+  )
 }
