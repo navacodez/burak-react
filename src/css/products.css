@@ -197,6 +197,8 @@
     border: 1px solid rgb(227, 192, 141);
     border-radius: 10px;
     background: rgba(187, 47, 200, 0.78);
+    z-index: 100000;
+    
   }
   
   .products .view-btn {
