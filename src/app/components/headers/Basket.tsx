@@ -106,7 +106,7 @@ const totalPrice = (itemsPrice + shippingCost).toFixed(1);
              <Box className={"orders-wrapper"}>
                 {cartItems.map((item: CartItem) => {
               const imagePath = `${serverApi}/${item.image}`;
-              return (<Box className={"basket-info-box"}>
+              return (<Box className={"basket-info-box"} key={item._id}>
                  <div className={"cancel-btn"}>
                     <CancelIcon color={"primary"} onClick={() => onDelete(item)} />
                  </div>
