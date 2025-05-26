@@ -8,7 +8,7 @@ import styled from "styled-components";
 import LoginIcon from "@mui/icons-material/Login";
 import { T } from "../../../lib/types/common";
 import { Message } from "../../../lib/config";
-import { MemberInput } from "../../../lib/types/member";
+import { LoginInput, MemberInput } from "../../../lib/types/member";
 import MemberService from "../../services/MemberService"
 import { sweetErrorHandling } from "../../../lib/sweetAlerts";
 
@@ -63,12 +63,14 @@ const handleUsername = (e: T) => {
       const handlePasswordKeyDown = (e: T) => {
         if(e.key === "Enter" && signupOpen) {
           handleSignupRequest().then();
-        }
-      }
+        
+      } else if(e.key === "Enter" && loginOpen) {
+          handleLoginRequest().then();
+        } 
+    }
 
       const handleSignupRequest = async () => {
        try {
-        console.log("inputs:", memberNick, memberPhone, memberPassword);
         const isFulfill = memberNick !== "" && memberPhone !== "" && memberPassword !== "";
         if(!isFulfill) throw new Error(Message.error3);
 
@@ -80,6 +82,8 @@ const handleUsername = (e: T) => {
         
         const member = new MemberService();
         const result = await member.signup(signupInput);
+
+            // Saving Authenticated user
         handleSignupClose();
        } catch (err) {
         console.log(err);
@@ -87,6 +91,29 @@ const handleUsername = (e: T) => {
         sweetErrorHandling(err).then()
        }
       };
+
+       const handleLoginRequest = async () => {
+        try {
+       
+         const isFulfill = memberNick !== "" &&  "" && memberPassword !== "";
+         if(!isFulfill) throw new Error(Message.error3);
+ 
+         const loginInput: LoginInput = {
+           memberNick: memberNick,
+           memberPassword: memberPassword,
+         };
+         
+         const member = new MemberService();
+         const result = await member.login(loginInput);
+
+          // Saving Authenticated user
+         handleLoginClose();
+        } catch (err) {
+         console.log(err);
+         handleLoginClose();
+         sweetErrorHandling(err).then()
+        }
+       };
 
   return (
     <div>
@@ -178,17 +205,21 @@ const handleUsername = (e: T) => {
                 label="username"
                 variant="outlined"
                 sx={{ my: "10px" }}
+                onChange={handleUsername}
               />
               <TextField
                 id={"outlined-basic"}
                 label={"password"}
                 variant={"outlined"}
                 type={"password"}
+                onChange={handlePassword}
+                onKeyDown={handlePasswordKeyDown}
               />
               <Fab
                 sx={{ marginTop: "27px", width: "120px" }}
                 variant={"extended"}
                 color={"primary"}
+                onClick={handleLoginRequest}
               >
                 <LoginIcon sx={{ mr: 1 }} />
                 Login
