@@ -7,7 +7,7 @@ import { Fab, Stack, TextField } from "@mui/material";
 import styled from "styled-components";
 import LoginIcon from "@mui/icons-material/Login";
 import { T } from "../../../lib/types/common";
-import { Message } from "../../../lib/config";
+import { Messages } from "../../../lib/config";
 import { LoginInput, MemberInput } from "../../../lib/types/member";
 import MemberService from "../../services/MemberService"
 import { sweetErrorHandling } from "../../../lib/sweetAlerts";
@@ -75,7 +75,7 @@ const handleUsername = (e: T) => {
       const handleSignupRequest = async () => {
        try {
         const isFulfill = memberNick !== "" && memberPhone !== "" && memberPassword !== "";
-        if(!isFulfill) throw new Error(Message.error3);
+        if(!isFulfill) throw new Error(Messages.error3);
 
         const signupInput: MemberInput = {
           memberNick: memberNick,
@@ -100,7 +100,7 @@ const handleUsername = (e: T) => {
         try {
        
          const isFulfill = memberNick !== "" && memberPassword !== "";
-         if(!isFulfill) throw new Error(Message.error3);
+         if(!isFulfill) throw new Error(Messages.error3);
  
          const loginInput: LoginInput = {
            memberNick: memberNick,

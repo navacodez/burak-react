@@ -18,7 +18,7 @@ import "../css/footer.css";
 import Test from "./screens/Test"
 import { T } from "../lib/types/common";
 import { sweetErrorHandling, sweetTopSuccessAlert } from "../lib/sweetAlerts";
-import { Message } from "../lib/config";
+import { Messages } from "../lib/config";
 import MemberService from "./services/MemberService";
 import { useGlobals } from "./hooks/useGlobals";
 
@@ -52,7 +52,7 @@ const {cartItems, onAdd, onRemove,
     setAuthMember(null);
   } catch(err) {
     console.log(err);
-    sweetErrorHandling(Message.error1);
+    sweetErrorHandling(Messages.error1);
    }
   } 
 
