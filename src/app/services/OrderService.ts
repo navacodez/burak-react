@@ -1,7 +1,7 @@
 import axios from "axios";
 import { serverApi } from "../../lib/config";
 import { CartItem } from "../../lib/types/search";
-import { Order, OrderInquiry, OrderItemInput } from "../../lib/types/order";
+import { Order, OrderInquiry, OrderItemInput, OrderUpdateInput } from "../../lib/types/order";
 
 class OrderService {
 private readonly path: string;
@@ -21,7 +21,7 @@ try {
     };
  });
 
- const url = this.path + "/order/create";
+ const url = `${this.path}/order/create`;
  const result = await axios.post(url, orderItems, {withCredentials: true,   
  })
    console.log("createOrder:", result)
@@ -49,6 +49,18 @@ public async getMyOrders(input: OrderInquiry): Promise<Order[]> {
     throw err;
     }
   }
+      public async updateOrder(input: OrderUpdateInput): Promise<Order> {
+        try {
+         const url = `${this.path}/order/update`;
+         const result = await axios.post(url, input, {withCredentials: true});
+         console.log("updateOrder:", result);
+
+         return result.data;
+        } catch(err) {
+        console.log("Error. updateOrder:", err);
+        throw err;
+        }
+    }
 }
 
 export default OrderService;
